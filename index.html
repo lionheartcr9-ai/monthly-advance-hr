@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>نظام منح السلفة الشهرية — HR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #020617;
+      --accent: #06b6d4;
+      --accent-soft: rgba(34, 211, 238, 0.1);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: #1f2937;
+      --danger: #dc2626;
+      --warning: #f97316;
+      --success: #16a34a;
+      --info: #2563eb;
+      --pill-bg: #111827;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%, #000 100%);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1300px;
+      margin: 1.5rem auto 2rem;
+      padding: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .page {
+        padding: 1.5rem;
+      }
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 0.75rem;
+      font-size: 1.9rem;
+      letter-spacing: 0.04em;
+      color: #38bdf8;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: radial-gradient(circle at top, #020617 0, #020617 60%, #020617 100%);
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      padding: 1.25rem 1.25rem 1.5rem;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .card-title span.icon {
+      font-size: 1.3rem;
+    }
+
+    .hint {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: 2.3fr 1.7fr 1.5fr;
+      }
+    }
+
+    .field-label {
+      font-size: 0.82rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-muted);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background-color: #020617;
+      color: transparent;
+      cursor: pointer;
+    }
+
+    .file-input::file-selector-button {
+      display: none;
+    }
+
+    .file-input-label-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      padding-inline: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .file-input-label-overlay span.name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 70%;
+      direction: ltr;
+      text-align: left;
+      unicode-bidi: plaintext;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    .file-input-label-overlay span.btn {
+      pointer-events: none;
+      background: var(--accent);
+      color: #0f172a;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.48rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background-color: #020617;
+      background-image: linear-gradient(135deg, #020617, #020617);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.6);
+    }
+
+    .select-inline-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .actions-row {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 1.3rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #e5e7eb;
+      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.35);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #06b6d4, #0284c7);
+      color: #e5e7eb;
+      box-shadow: 0 10px 25px rgba(8, 145, 178, 0.35);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .btn span.icon {
+      font-size: 1.05rem;
+    }
+
+    .summary-row {
+      margin-bottom: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .filter-btn {
+      border-radius: 999px;
+      border: 1px solid #111827;
+      background: #020617;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      padding: 0.25rem 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .filter-btn.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .filter-count {
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .search-box {
+      margin-top: 0.3rem;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 350px;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: var(--text-main);
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: #6b7280;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.5);
+    }
+
+    .table-wrapper {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 20px;
+      border: 1px solid #1f2937;
+      overflow: hidden;
+    }
+
+    .table-scroll {
+      max-height: 460px;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      direction: rtl;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background: #020617;
+      z-index: 1;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #111827;
+      padding: 0.25rem 0.4rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: #020617;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #020617;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: #020617;
+    }
+
+    td.index-col {
+      width: 30px;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+
+    td.code-col {
+      width: 70px;
+      font-weight: 600;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      direction: ltr;
+    }
+
+    td.name-col {
+      min-width: 220px;
+      max-width: 280px;
+      text-align: right;
+      padding-inline-start: 0.7rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    td.money-col,
+    td.num-col {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      direction: ltr;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    td.money-col {
+      min-width: 80px;
+    }
+
+    td.note-col {
+      min-width: 200px;
+      text-align: right;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.1rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #f9fafb;
+      background: var(--pill-bg);
+      min-width: 130px;
+    }
+
+    .status-approved {
+      background: var(--success);
+    }
+
+    .status-settle {
+      background: var(--info);
+    }
+
+    .status-pending {
+      background: var(--warning);
+    }
+
+    .status-reject {
+      background: var(--danger);
+    }
+
+    .footer {
+      margin-top: 1.2rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>نظام منح السلفة الشهرية — HR</h1>
+    <div class="subtitle">
+      منح سلفة للموظفين بطريقة عادلة وآمنة، مع حماية من التكرار والأخطاء وكل المعالجة تتم داخل متصفحك (بدون إنترنت).
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="icon">📂</span>
+          <span>ملف كشف المرتبات (XLSX)</span>
+        </div>
+        <div class="hint">
+          الأعمدة المطلوبة: رقم الموظف، اسم الموظف، الراتب الأساسي، أكرامية، إجمالي الاستحقاق، سلفة على الراتب، سلفة مقسطة (إن وجدت)، غياب، إجازة إجبارية براتب (إن وجدت)، صافي الراتب.
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <div class="field-label">ملف كشف المرتبات</div>
+          <div class="file-input-wrapper">
+            <input id="file-input" type="file" accept=".xlsx,.xls" class="file-input" />
+            <div class="file-input-label-overlay">
+              <span class="name" id="file-name-label">لم يتم اختيار ملف بعد…</span>
+              <span class="btn">اختر ملفًا</span>
+            </div>
+          </div>
+          <div class="select-inline-label">يفضّل أن يكون الملف من نظام المرتبات مباشرة.</div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">نوع الفئة</div>
+          <select id="category-select">
+            <option value="workers">العمال والمشرفين — نسبة السلفة (30%)</option>
+            <option value="admins">الإداريين — نسبة السلفة (25%)</option>
+          </select>
+          <div class="select-inline-label">
+            اختر الفئة المناسبة للكشف الذي ستعمل عليه.
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">تاريخ السلفة</div>
+          <select id="date-select"></select>
+          <div class="select-inline-label">
+            يستخدم في الملاحظات وحساسية السلفة السابقة للإداريين.
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button id="process-btn" class="btn btn-primary">
+          <span class="icon">🚀</span>
+          <span>بدء الاحتساب</span>
+        </button>
+
+        <button id="export-btn" class="btn btn-secondary" disabled>
+          <span class="icon">💾</span>
+          <span>تنزيل ملف السلفة XLSX</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="summary-row">
+        <button class="filter-btn active" data-filter="all">
+          الكل
+          <span class="filter-count" id="count-all">0</span>
+        </button>
+        <button class="filter-btn" data-filter="approved">
+          سلفة نظامية
+          <span class="filter-count" id="count-approved">0</span>
+        </button>
+        <button class="filter-btn" data-filter="settle">
+          تصفية/تعبئة
+          <span class="filter-count" id="count-settle">0</span>
+        </button>
+        <button class="filter-btn" data-filter="reject">
+          مرفوضة / لا يستحق
+          <span class="filter-count" id="count-reject">0</span>
+        </button>
+        <button class="filter-btn" data-filter="pending">
+          يتطلب تحقق
+          <span class="filter-count" id="count-pending">0</span>
+        </button>
+      </div>
+
+      <div class="search-box">
+        <input id="search-input" class="search-input" type="text" placeholder="🔍 ابحث برقم الموظف أو الاسم…" />
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>م</th>
+              <th>رقم الموظف</th>
+              <th>اسم الموظف</th>
+              <th>إجمالي الاستحقاق</th>
+              <th>سلفة سابقة</th>
+              <th>صافي الراتب</th>
+              <th>أيام الغياب</th>
+              <th>أيام الحضور</th>
+              <th id="advance-percent-header">سلفة % (25/30)</th>
+              <th>نوع القرار</th>
+              <th>المبلغ المقترح</th>
+              <th>المبلغ المعتمد</th>
+              <th>الحالة</th>
+              <th>ملاحظة</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      نظام منح السلفة الشهرية — اليمن • إعداد وتنفيذ: المهندس حمدي العريقي — ت: 773143600 • جميع الحقوق محفوظة 2025 ©
+    </div>
+  </div>
+
+  <script src="xlsx.full.min.js"></script>
+
+  <script>
+    const fileInput = document.getElementById("file-input");
+    const fileNameLabel = document.getElementById("file-name-label");
+    const processBtn = document.getElementById("process-btn");
+    const exportBtn = document.getElementById("export-btn");
+    const categorySelect = document.getElementById("category-select");
+    const dateSelect = document.getElementById("date-select");
+    const resultsBody = document.getElementById("results-body");
+    const searchInput = document.getElementById("search-input");
+    const filterButtons = Array.from(document.querySelectorAll(".filter-btn"));
+    const advancePercentHeader = document.getElementById("advance-percent-header");
+
+    const countAll = document.getElementById("count-all");
+    const countApproved = document.getElementById("count-approved");
+    const countSettle = document.getElementById("count-settle");
+    const countReject = document.getElementById("count-reject");
+    const countPending = document.getElementById("count-pending");
+
+    let allResults = [];
+    let currentFilter = "all";
+    let currentSearch = "";
+    let currentPercentLabel = "سلفة % (25/30)";
+
+    const arabicDigits = "٠١٢٣٤٥٦٧٨٩";
+
+    function normalizeDigits(str) {
+      return str.replace(/[٠-٩]/g, d => arabicDigits.indexOf(d));
+    }
+
+    function toNumber(value) {
+      if (value === null || value === undefined) return 0;
+      if (typeof value === "number") return isNaN(value) ? 0 : value;
+      let s = String(value).trim();
+      if (!s) return 0;
+      s = normalizeDigits(s);
+      s = s.replace(/[^0-9.\-]/g, "");
+      const n = parseFloat(s);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function roundMoney(v) {
+      if (v === null || v === undefined || isNaN(v)) return "";
+      return Math.round(v).toString();
+    }
+
+    function roundNumber(v, decimals = 1) {
+      if (v === null || v === undefined || isNaN(v)) return "";
+      const factor = Math.pow(10, decimals);
+      return (Math.round(v * factor) / factor).toString();
+    }
+
+    function roundToHundredDown(v) {
+      const n = Number(v);
+      if (!n || isNaN(n) || n <= 0) return 0;
+      return Math.floor(n / 100) * 100;
+    }
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files && fileInput.files[0]) {
+        fileNameLabel.textContent = fileInput.files[0].name;
+      } else {
+        fileNameLabel.textContent = "لم يتم اختيار ملف بعد…";
+      }
+    });
+
+    function updatePercentHeader() {
+      currentPercentLabel = categorySelect.value === "workers" ? "سلفة 30%" : "سلفة 25%";
+      advancePercentHeader.textContent = currentPercentLabel;
+    }
+
+    function syncDateOptions() {
+      const cat = categorySelect.value;
+      dateSelect.innerHTML = "";
+      if (cat === "workers") {
+        const opt = document.createElement("option");
+        opt.value = "15";
+        opt.textContent = "يوم 15 من الشهر (عمال)";
+        dateSelect.appendChild(opt);
+      } else {
+        const opt10 = document.createElement("option");
+        opt10.value = "10";
+        opt10.textContent = "يوم 10 من الشهر (إداريين)";
+        const opt20 = document.createElement("option");
+        opt20.value = "20";
+        opt20.textContent = "يوم 20 من الشهر (إداريين)";
+        dateSelect.appendChild(opt10);
+        dateSelect.appendChild(opt20);
+      }
+    }
+
+    categorySelect.addEventListener("change", () => {
+      updatePercentHeader();
+      syncDateOptions();
+    });
+
+    updatePercentHeader();
+    syncDateOptions();
+
+    processBtn.addEventListener("click", () => {
+      if (!fileInput.files || !fileInput.files[0]) {
+        alert("يرجى اختيار ملف كشف المرتبات أولاً.");
+        return;
+      }
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const firstSheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[firstSheetName];
+          const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+          if (!rows || !rows.length) {
+            alert("تعذر قراءة بيانات من الملف. تأكد من أن الورقة تحتوي على صفوف.");
+            return;
+          }
+
+          const category = categorySelect.value;
+          const advanceDate = dateSelect.value;
+          allResults = processRows(rows, category, advanceDate);
+
+          updateCounts();
+          applyFilter("all");
+          exportBtn.disabled = allResults.length === 0;
+        } catch (err) {
+          console.error(err);
+          alert("حدث خطأ أثناء قراءة ملف الإكسل. تأكد أن الملف بصيغة XLSX صحيحة.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    function findColumn(headers, candidates) {
+      const cleanedHeaders = headers.map(h => h.replace(/\s/g, ""));
+      for (let c of candidates) {
+        const cleanedCandidate = c.replace(/\s/g, "");
+        const idx = cleanedHeaders.findIndex(h => h.includes(cleanedCandidate));
+        if (idx !== -1) return headers[idx];
+      }
+      return null;
+    }
+
+    function processRows(rows, category, advanceDate) {
+      const headers = Object.keys(rows[0]);
+      const colCode = findColumn(headers, ["رقمالموظف", "الكود"]);
+      const colName = findColumn(headers, ["اسمالموظف", "الاسم"]);
+      const colBasic = findColumn(headers, ["الراتبالاساسي"]);
+      const colBonus = findColumn(headers, ["اكرامية", "الإكرامية"]);
+      const colGross = findColumn(headers, ["اجماليالاستحقاق"]);
+      const colLoan = findColumn(headers, ["سلفةعلىالراتب"]);
+      const colInstLoan = findColumn(headers, ["سلفةمقسطة"]);
+      const colAbsenceMoney = findColumn(headers, ["غياب"]);
+      const colAbsenceDays = findColumn(headers, ["ايامغياب", "ايامغ", "أيامغياب"]);
+      const colForcedLeave = findColumn(headers, ["اجازةاجباريةبراتب"]);
+      const colNet = findColumn(headers, ["صافيالراتب", "صافيراتب"]);
+
+      if (!colCode || !colName || !colBasic || !colBonus || !colGross || !colNet) {
+        alert("بعض الأعمدة الأساسية غير موجودة في الملف (رقم الموظف، اسم الموظف، الراتب الأساسي، الأكرامية، إجمالي الاستحقاق، صافي الراتب).");
+        return [];
+      }
+
+      const results = [];
+      const percent = category === "workers" ? 0.30 : 0.25;
+      const monthlyCapPercent =
+        category === "workers"
+          ? 0.30
+          : (advanceDate === "10" ? 0.25 : 0.50);
+
+      currentPercentLabel = category === "workers" ? "سلفة 30%" : "سلفة 25%";
+      advancePercentHeader.textContent = currentPercentLabel;
+
+      rows.forEach((row, idx) => {
+        const index = idx + 1;
+        const code = row[colCode];
+        const name = row[colName];
+
+        const basic = toNumber(row[colBasic]);
+        const bonus = toNumber(row[colBonus]);
+        let gross = basic + bonus;
+        const grossSystem = colGross ? toNumber(row[colGross]) : 0;
+        if (grossSystem > 0 && Math.abs(grossSystem - gross) > 1) {
+          gross = basic + bonus;
+        }
+
+        const net = toNumber(row[colNet]);
+        const loanOnSalary = colLoan ? toNumber(row[colLoan]) : 0;
+        const instLoan = colInstLoan ? toNumber(row[colInstLoan]) : 0;
+        const existingLoan = loanOnSalary + instLoan;
+
+        const dayWage = gross > 0 ? gross / 30 : 0;
+
+        let absenceDays = 0;
+        if (colAbsenceDays) {
+          absenceDays = toNumber(row[colAbsenceDays]);
+        } else if (colAbsenceMoney) {
+          const absenceMoney = toNumber(row[colAbsenceMoney]);
+          absenceDays = dayWage > 0 ? absenceMoney / dayWage : 0;
+        }
+
+        const forcedLeaveMoney = colForcedLeave ? toNumber(row[colForcedLeave]) : 0;
+        const perDayBonus = bonus > 0 ? (bonus / 30) : 0;
+        const forcedDays = perDayBonus > 0 ? (forcedLeaveMoney / perDayBonus) : 0;
+
+        const totalAbsence = absenceDays + forcedDays;
+        const presenceDays = Math.max(0, 30 - totalAbsence);
+
+        let percentBaseAmount = roundToHundredDown(gross * percent);
+        const monthlyCapAmount = gross * monthlyCapPercent;
+
+        let decisionType = "";
+        let status = "";
+        let suggestedAmount = 0;
+        let finalAmount = 0;
+        let note = "";
+
+        if (totalAbsence >= 30) {
+          status = "reject";
+          decisionType = "لا يستحق سلفة — غياب 30 يوم";
+          note = "العامل منقطع عن العمل 30 يومًا (أو أكثر)، لا يستحق سلفة لهذا الشهر.";
+        } else if (net <= 0) {
+          status = "reject";
+          decisionType = "لا يستحق سلفة — رصيده لا يسمح";
+          note = "صافي الراتب يساوي صفر أو أقل؛ ربما تمت تصفية الحساب مسبقاً أو لا يوجد رصيد متاح.";
+        } else {
+          if (category === "workers") {
+            if (presenceDays >= 10) {
+              suggestedAmount = percentBaseAmount;
+              decisionType = "سلفة نسبة (" + Math.round(percent * 100) + "%)";
+              status = "approved";
+            } else {
+              const base = Math.min(net, percentBaseAmount);
+              suggestedAmount = base;
+              decisionType = "تصفية (أقل من 10 أيام حضور)";
+              status = "settle";
+            }
+          } else {
+            const absenceForRule = totalAbsence;
+            if (absenceForRule <= 3) {
+              suggestedAmount = percentBaseAmount;
+              decisionType = "سلفة نسبة (" + Math.round(percent * 100) + "%)";
+              status = "approved";
+            } else {
+              const base = Math.min(net, percentBaseAmount);
+              suggestedAmount = base;
+              decisionType = "تصفية (غياب أكثر من 3 أيام في الفترة)";
+              status = "settle";
+            }
+          }
+
+          finalAmount = suggestedAmount;
+
+          if (loanOnSalary > 0) {
+            if (loanOnSalary >= monthlyCapAmount) {
+              status = "reject";
+              decisionType = "مرفوض — سلفة سابقة ≥ الحد الشهري";
+              suggestedAmount = 0;
+              finalAmount = 0;
+              note =
+                `سلفة على الراتب حتى الآن = ${roundMoney(loanOnSalary)} ` +
+                `≥ الحد الشهري المسموح (${roundMoney(monthlyCapAmount)}). لا يسمح بسلفة جديدة لنفس الشهر.`;
+            } else {
+              status = "pending";
+              const remainingForMonth = monthlyCapAmount - loanOnSalary;
+              const allowedThisRun = Math.min(percentBaseAmount, remainingForMonth);
+              suggestedAmount = allowedThisRun;
+              finalAmount = allowedThisRun;
+              decisionType = "يتطلب تحقق — سلفة سابقة في الشهر";
+              note =
+                `سلفة على الراتب حتى الآن = ${roundMoney(loanOnSalary)} أقل من الحد الشهري (${roundMoney(monthlyCapAmount)}). ` +
+                `المتبقي لهذا الشهر = ${roundMoney(remainingForMonth)}، ` +
+                `والمبلغ المقترح في هذه العملية = ${roundMoney(allowedThisRun)}.`;
+            }
+          }
+        }
+
+        percentBaseAmount = roundToHundredDown(percentBaseAmount);
+        suggestedAmount = roundToHundredDown(suggestedAmount);
+        finalAmount = roundToHundredDown(finalAmount);
+
+        const statusLabel = {
+          approved: "سلفة نظامية",
+          settle: "تصفية/تعبئة",
+          pending: "يتطلب تحقق",
+          reject: "لا يستحق / مرفوض"
+        }[status] || status;
+
+        results.push({
+          index,
+          code,
+          name,
+          gross,
+          existingLoan,
+          net,
+          totalAbsence,
+          presenceDays,
+          percentBaseAmount,
+          decisionType,
+          suggestedAmount,
+          finalAmount,
+          status,
+          statusLabel,
+          note
+        });
+      });
+
+      return results;
+    }
+
+    function updateCounts() {
+      const total = allResults.length;
+      const approved = allResults.filter(r => r.status === "approved").length;
+      const settle = allResults.filter(r => r.status === "settle").length;
+      const reject = allResults.filter(r => r.status === "reject").length;
+      const pending = allResults.filter(r => r.status === "pending").length;
+
+      countAll.textContent = total;
+      countApproved.textContent = approved;
+      countSettle.textContent = settle;
+      countReject.textContent = reject;
+      countPending.textContent = pending;
+    }
+
+    function applyFilter(filter) {
+      currentFilter = filter;
+      renderTable();
+      filterButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.filter === filter);
+      });
+    }
+
+    function renderTable() {
+      resultsBody.innerHTML = "";
+      const fragment = document.createDocumentFragment();
+
+      const filtered = allResults.filter(r => {
+        if (currentFilter !== "all" && r.status !== currentFilter) return false;
+        if (!currentSearch) return true;
+        const s = currentSearch.toLowerCase();
+        const code = String(r.code || "").toLowerCase();
+        const name = String(r.name || "").toLowerCase();
+        return code.includes(s) || name.includes(s);
+      });
+
+      filtered.forEach(r => {
+        const tr = document.createElement("tr");
+        const statusClass = {
+          approved: "status-approved",
+          settle: "status-settle",
+          pending: "status-pending",
+          reject: "status-reject"
+        }[r.status] || "";
+
+        tr.innerHTML = `
+          <td class="index-col">${r.index}</td>
+          <td class="code-col">${r.code || ""}</td>
+          <td class="name-col">${r.name || ""}</td>
+          <td class="money-col">${roundMoney(r.gross)}</td>
+          <td class="money-col">${roundMoney(r.existingLoan)}</td>
+          <td class="money-col">${roundMoney(r.net)}</td>
+          <td class="num-col">${roundNumber(r.totalAbsence)}</td>
+          <td class="num-col">${roundNumber(r.presenceDays)}</td>
+          <td class="money-col">${roundMoney(r.percentBaseAmount)}</td>
+          <td>${r.decisionType || ""}</td>
+          <td class="money-col">${roundMoney(r.suggestedAmount)}</td>
+          <td class="money-col">${roundMoney(r.finalAmount)}</td>
+          <td><span class="status-pill ${statusClass}">${r.statusLabel || ""}</span></td>
+          <td class="note-col">${r.note || ""}</td>
+        `;
+        fragment.appendChild(tr);
+      });
+
+      resultsBody.appendChild(fragment);
+    }
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        applyFilter(btn.dataset.filter);
+      });
+    });
+
+    searchInput.addEventListener("input", () => {
+      currentSearch = searchInput.value.trim().toLowerCase();
+      renderTable();
+    });
+
+    exportBtn.addEventListener("click", () => {
+      if (!allResults.length) {
+        alert("لا توجد نتائج لتصديرها.");
+        return;
+      }
+
+      const wb = XLSX.utils.book_new();
+
+      const sheet1Header = [
+        "م",
+        "رقم الموظف",
+        "اسم الموظف",
+        "إجمالي الاستحقاق",
+        "سلفة سابقة",
+        "صافي الراتب",
+        "أيام الغياب",
+        "أيام الحضور",
+        currentPercentLabel,
+        "نوع القرار",
+        "المبلغ المقترح",
+        "المبلغ المعتمد",
+        "الحالة",
+        "ملاحظة"
+      ];
+
+      const sheet1Data = [sheet1Header];
+
+      allResults.forEach(r => {
+        sheet1Data.push([
+          r.index,
+          r.code || "",
+          r.name || "",
+          roundMoney(r.gross),
+          roundMoney(r.existingLoan),
+          roundMoney(r.net),
+          roundNumber(r.totalAbsence),
+          roundNumber(r.presenceDays),
+          roundMoney(r.percentBaseAmount),
+          r.decisionType || "",
+          roundMoney(r.suggestedAmount),
+          roundMoney(r.finalAmount),
+          r.statusLabel || "",
+          r.note || ""
+        ]);
+      });
+
+      const ws1 = XLSX.utils.aoa_to_sheet(sheet1Data);
+      XLSX.utils.book_append_sheet(wb, ws1, "تفصيلي");
+
+      const payable = allResults.filter(r => r.finalAmount > 0);
+      const ws2 = {};
+
+      payable.forEach((r, i) => {
+        const rowIndex = i;
+        const sourceRow = r.index + 1;
+
+        const addrA = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
+        const addrB = XLSX.utils.encode_cell({ r: rowIndex, c: 1 });
+        const addrC = XLSX.utils.encode_cell({ r: rowIndex, c: 2 });
+        const addrD = XLSX.utils.encode_cell({ r: rowIndex, c: 3 });
+
+        ws2[addrA] = { t: "s", v: String(r.code || "") };
+        ws2[addrB] = { t: "s", v: String(r.name || "") };
+        ws2[addrC] = {
+          t: "n",
+          v: Number(r.finalAmount),
+          f: `تفصيلي!L${sourceRow}`
+        };
+        ws2[addrD] = { t: "s", v: "YER" };
+      });
+
+      if (payable.length > 0) {
+        ws2["!ref"] = XLSX.utils.encode_range({
+          s: { r: 0, c: 0 },
+          e: { r: payable.length - 1, c: 3 }
+        });
+      } else {
+        ws2["!ref"] = "A1:D1";
+      }
+
+      XLSX.utils.book_append_sheet(wb, ws2, "لمنح السلفة");
+
+      const fileName = "canary_monthly_advance.xlsx";
+      XLSX.writeFile(wb, fileName);
+    });
+  </script>
+</body>
+</html>
