@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>شاشة طلب السلفة - مراقب الدوام</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ملاحظة هامة:
+       للاستخدام أوفلاين، ضع ملف xlsx.full.min.js في نفس المجلد
+       بنفس الاسم التالي: xlsx.full.min.js
+  -->
+  <script src="xlsx.full.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #020617;
+      --card-border: #1e293b;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.12);
+      --accent-text: #bbf7d0;
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.12);
+      --muted: #94a3b8;
+      --text: #e2e8f0;
+      --text-soft: #cbd5f5;
+      --chip-bg: #1e293b;
+      --chip-active: #0f766e;
+      --chip-active-soft: rgba(15,118,110,0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1e293b, #020617 55%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1200px;
+      padding: 1rem;
+      padding-bottom: 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .app {
+        padding: 2rem;
+      }
+    }
+
+    .card {
+      background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.98));
+      border-radius: 1.5rem;
+      border: 1px solid var(--card-border);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(15,23,42,0.8);
+      padding: 1.5rem 1.25rem 1.75rem;
+    }
+
+    @media (min-width: 768px) {
+      .card {
+        padding: 1.75rem 2rem 2.25rem;
+      }
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .title {
+        font-size: 1.6rem;
+      }
+    }
+
+    .title-badge {
+      font-size: 0.85rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-text);
+      border: 1px solid rgba(34, 197, 94, 0.5);
+    }
+
+    .subtitle {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: flex-start;
+    }
+
+    @media (min-width: 768px) {
+      .actions-row {
+        justify-content: flex-end;
+      }
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      padding: 0.5rem 0.9rem;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: radial-gradient(circle at top left, rgba(148,163,184,0.2), rgba(15,23,42,0.9));
+      color: var(--text);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s ease, transform 0.08s ease, border-color 0.15s ease;
+    }
+
+    .btn:hover {
+      background: radial-gradient(circle at top left, rgba(148,163,184,0.3), rgba(15,23,42,0.95));
+      border-color: rgba(148,163,184,0.7);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-color: rgba(34,197,94,0.9);
+      color: #022c22;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #b91c1c);
+      border-color: rgba(248,113,113,0.8);
+      color: #fef2f2;
+    }
+
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #f97373, #b91c1c);
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+    }
+
+    .file-section {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .file-label {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .file-input-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .file-input {
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.8);
+      color: var(--text-soft);
+      font-size: 0.9rem;
+      max-width: 100%;
+    }
+
+    .file-info {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.8rem;
+      background: var(--chip-bg);
+      border: 1px solid rgba(148,163,184,0.45);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .chip-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-soft);
+    }
+
+    .chip-strong {
+      background: var(--chip-active-soft);
+      border-color: rgba(34,197,94,0.7);
+      color: var(--accent-text);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .stats-row {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .stat-card {
+      border-radius: 1rem;
+      padding: 0.6rem 0.7rem;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(30,64,175,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+
+    .stat-pill {
+      font-size: 0.7rem;
+      padding: 0.05rem 0.4rem;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,184,0.4);
+      color: var(--muted);
+    }
+
+    .stat-accent {
+      border-color: rgba(34,197,94,0.7);
+      color: var(--accent-text);
+    }
+
+    .table-wrapper {
+      border-radius: 1.1rem;
+      border: 1px solid rgba(51,65,85,0.95);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), #020617);
+      overflow: hidden;
+      max-height: 70vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-header {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid rgba(51,65,85,0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .table-header-title {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    .table-header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .mini-pill {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.8);
+      border: 1px solid rgba(71,85,105,0.9);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .table-scroll {
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+      font-size: 0.92rem;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(15,23,42,0.96);
+      box-shadow: 0 1px 0 rgba(30,64,175,0.7);
+    }
+
+    th, td {
+      padding: 0.45rem 0.6rem;
+      text-align: right;
+      border-bottom: 1px solid rgba(30,41,59,0.9);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: rgba(15,23,42,0.9);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(15,23,42,0.78);
+    }
+
+    tbody tr:hover {
+      background: rgba(30,64,175,0.3);
+    }
+
+    .cell-index {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .cell-code {
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .cell-name {
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cell-note {
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .select-input,
+    .number-input,
+    .text-input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      font-size: 0.85rem;
+      padding: 0.2rem 0.5rem;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    .text-input {
+      border-radius: 999px;
+    }
+
+    .select-input:focus,
+    .number-input:focus,
+    .text-input:focus {
+      border-color: rgba(94,234,212,0.9);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.7);
+      background: rgba(15,23,42,0.98);
+    }
+
+    .select-input {
+      padding-inline-end: 1.5rem;
+    }
+
+    .pill-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 999px;
+      padding: 0.1rem 0.5rem;
+      font-size: 0.75rem;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.8);
+      color: var(--muted);
+    }
+
+    .pill-type-full {
+      border-color: rgba(34,197,94,0.7);
+      background: var(--accent-soft);
+      color: var(--accent-text);
+    }
+
+    .pill-type-none {
+      border-color: rgba(148,163,184,0.6);
+    }
+
+    .pill-type-custom {
+      border-color: rgba(59,130,246,0.7);
+      background: rgba(59,130,246,0.18);
+      color: #bfdbfe;
+    }
+
+    .footer {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .footer small {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <div class="header">
+        <div class="title-block">
+          <div class="title">
+            شاشة طلب السلفة
+            <span class="title-badge">مراقب الدوام</span>
+          </div>
+          <div class="subtitle">
+            ارفع كشف الموظفين (رقم + اسم) ثم حدّد لكل موظف: لا يطلب / سلفة كاملة / مبلغ محدد. لا توجد أي بيانات رواتب في هذه الشاشة 🔐
+          </div>
+        </div>
+        <div class="actions-row">
+          <button id="btnExport" class="btn btn-primary" type="button">
+            <span class="btn-icon">💾</span>
+            تنزيل ملف طلبات السلفة (XLSX)
+          </button>
+          <button id="btnClearStorage" class="btn btn-danger" type="button">
+            <span class="btn-icon">🧹</span>
+            مسح الحفظ من هذا الجهاز
+          </button>
+        </div>
+      </div>
+
+      <div class="file-section">
+        <div class="file-label">
+          1️⃣ تحميل ملف الموظفين (رقم الموظف + اسم الموظف فقط)
+        </div>
+        <div class="file-input-wrapper">
+          <input id="fileInput" type="file" class="file-input" accept=".xlsx,.xls" />
+          <span id="fileInfo" class="file-info">لم يتم اختيار ملف بعد.</span>
+        </div>
+      </div>
+
+      <div class="chips-row">
+        <div class="chip chip-strong">
+          <span class="chip-dot"></span>
+          لا تُعرض الرواتب أو الإكراميات هنا – بيانات مالية سرية في نظام الموارد فقط 🔐
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">عدد الموظفين في الكشف</div>
+          <div id="statTotal" class="stat-value">0</div>
+          <div class="stat-pill">إجمالي الصفوف المحملة</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">طلبات مكتملة (FULL / CUSTOM)</div>
+          <div id="statFilled" class="stat-value">0</div>
+          <div class="stat-pill stat-accent">جاهزة للإرسال</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">لا يطلب سلفة</div>
+          <div id="statNone" class="stat-value">0</div>
+          <div class="stat-pill">NONE</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">لم يتم اختيار نوع الطلب</div>
+          <div id="statPending" class="stat-value">0</div>
+          <div class="stat-pill">ينتظر تعبئة</div>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <div class="table-header">
+          <div class="table-header-title">
+            2️⃣ تعبئة طلبات السلفة لكل موظف
+          </div>
+          <div class="table-header-actions">
+            <span class="mini-pill">
+              <span style="width:8px;height:8px;border-radius:999px;background:#4ade80;"></span>
+              FULL = سلفة بحسب النظام
+            </span>
+            <span class="mini-pill">
+              <span style="width:8px;height:8px;border-radius:999px;background:#60a5fa;"></span>
+              CUSTOM = مبلغ محدد
+            </span>
+            <span class="mini-pill">
+              <span style="width:8px;height:8px;border-radius:999px;background:#9ca3af;"></span>
+              NONE = لا يطلب سلفة
+            </span>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>رقم الموظف</th>
+                <th>اسم الموظف</th>
+                <th>نوع الطلب</th>
+                <th>المبلغ المطلوب</th>
+                <th>ملاحظة</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- الصفوف تُنشأ برمجياً -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        <small>💡 ملاحظة: ملف طلبات السلفة الناتج يحتوي فقط على (رقم + اسم + نوع الطلب + المبلغ المطلوب + ملاحظة) بدون أي معلومات عن الرواتب.</small>
+        <small id="footerStatus">لا يوجد ملف محمّل حالياً.</small>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ======= إعدادات عامة للحفظ الأوتوماتيكي =======
+    const fileInput = document.getElementById("fileInput");
+    const fileInfo = document.getElementById("fileInfo");
+    const tableBody = document.getElementById("tableBody");
+
+    const statTotal   = document.getElementById("statTotal");
+    const statFilled  = document.getElementById("statFilled");
+    const statNone    = document.getElementById("statNone");
+    const statPending = document.getElementById("statPending");
+
+    const footerStatus    = document.getElementById("footerStatus");
+    const btnExport       = document.getElementById("btnExport");
+    const btnClearStorage = document.getElementById("btnClearStorage");
+
+    let currentRows = [];   // [{code, name, type, amount, note}]
+    let currentFileName = "";
+
+    function makeStorageKey(fileName) {
+      // مفتاح التخزين يعتمد على اسم الملف (لكل كشف مفتاح مستقل)
+      return "advance_requests_state_" + (fileName || "default");
+    }
+
+    // تحديث الإحصائيات
+    function updateStats() {
+      const total = currentRows.length;
+      let filled = 0;
+      let none   = 0;
+      let pending = 0;
+
+      currentRows.forEach(r => {
+        if (!r.type || r.type === "") {
+          pending++;
+        } else if (r.type === "NONE") {
+          none++;
+          filled++; // اعتبرنا NONE حالة مكتملة تعبئة
+        } else {
+          filled++;
+        }
+      });
+
+      statTotal.textContent   = total;
+      statFilled.textContent  = filled;
+      statNone.textContent    = none;
+      statPending.textContent = pending;
+    }
+
+    // حفظ في localStorage
+    function saveToStorage() {
+      if (!currentFileName) return;
+      const key = makeStorageKey(currentFileName);
+      try {
+        localStorage.setItem(key, JSON.stringify(currentRows));
+        footerStatus.textContent = "تم حفظ الطلبات في هذا الجهاز (" + currentRows.length + " موظف).";
+      } catch (e) {
+        console.error("LocalStorage save error:", e);
+        footerStatus.textContent = "تعذر الحفظ في هذا الجهاز (ربما السعة ممتلئة).";
+      }
+    }
+
+    // استعادة من localStorage
+    function loadFromStorage(fileName) {
+      const key = makeStorageKey(fileName);
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      try {
+        const data = JSON.parse(raw);
+        if (Array.isArray(data)) {
+          return data;
+        }
+      } catch (e) {
+        console.error("LocalStorage parse error:", e);
+      }
+      return null;
+    }
+
+    // توليد صف جدول واحد
+    function createRowElement(row, index) {
+      const tr = document.createElement("tr");
+
+      const tdIndex = document.createElement("td");
+      tdIndex.className = "cell-index";
+      tdIndex.textContent = index + 1;
+
+      const tdCode = document.createElement("td");
+      tdCode.className = "cell-code";
+      tdCode.textContent = row.code || "";
+
+      const tdName = document.createElement("td");
+      tdName.className = "cell-name";
+      tdName.textContent = row.name || "";
+
+      const tdType = document.createElement("td");
+      const select = document.createElement("select");
+      select.className = "select-input";
+      const optEmpty = new Option("— اختر —", "", true, (row.type === "" || !row.type));
+      const optNone  = new Option("لا يطلب سلفة (NONE)", "NONE", false, row.type === "NONE");
+      const optFull  = new Option("سلفة كاملة حسب النظام (FULL)", "FULL", false, row.type === "FULL");
+      const optCustom= new Option("مبلغ محدد (CUSTOM)", "CUSTOM", false, row.type === "CUSTOM");
+
+      select.appendChild(optEmpty);
+      select.appendChild(optNone);
+      select.appendChild(optFull);
+      select.appendChild(optCustom);
+
+      select.addEventListener("change", () => {
+        currentRows[index].type = select.value;
+        // لو نوع الطلب تحوّل من CUSTOM إلى شيء آخر، نظف المبلغ
+        if (select.value !== "CUSTOM") {
+          currentRows[index].amount = "";
+          amountInput.value = "";
+        }
+        styleTypeChip();
+        updateStats();
+        saveToStorage();
+      });
+
+      const pill = document.createElement("div");
+      pill.className = "pill-type";
+      const pillDot = document.createElement("span");
+      pillDot.style.width = "8px";
+      pillDot.style.height = "8px";
+      pillDot.style.borderRadius = "999px";
+      pill.appendChild(pillDot);
+      const pillText = document.createElement("span");
+      pillText.textContent = "غير محدد";
+      pill.appendChild(pillText);
+
+      function styleTypeChip() {
+        pill.className = "pill-type";
+        pillDot.style.background = "#9ca3af";
+        pillText.textContent = "غير محدد";
+
+        if (select.value === "NONE") {
+          pill.classList.add("pill-type-none");
+          pillDot.style.background = "#9ca3af";
+          pillText.textContent = "NONE";
+        } else if (select.value === "FULL") {
+          pill.classList.add("pill-type-full");
+          pillDot.style.background = "#4ade80";
+          pillText.textContent = "FULL";
+        } else if (select.value === "CUSTOM") {
+          pill.classList.add("pill-type-custom");
+          pillDot.style.background = "#60a5fa";
+          pillText.textContent = "CUSTOM";
+        }
+      }
+
+      styleTypeChip();
+
+      const typeWrapper = document.createElement("div");
+      typeWrapper.style.display = "flex";
+      typeWrapper.style.alignItems = "center";
+      typeWrapper.style.gap = "0.35rem";
+
+      typeWrapper.appendChild(select);
+      typeWrapper.appendChild(pill);
+
+      tdType.appendChild(typeWrapper);
+
+      const tdAmount = document.createElement("td");
+      const amountInput = document.createElement("input");
+      amountInput.type = "number";
+      amountInput.min = "0";
+      amountInput.step = "1";
+      amountInput.placeholder = "مبلغ اختياري";
+      amountInput.className = "number-input";
+      amountInput.value = row.amount != null ? row.amount : "";
+      amountInput.addEventListener("input", () => {
+        currentRows[index].amount = amountInput.value;
+        saveToStorage();
+      });
+      tdAmount.appendChild(amountInput);
+
+      const tdNote = document.createElement("td");
+      tdNote.className = "cell-note";
+      const noteInput = document.createElement("input");
+      noteInput.type = "text";
+      noteInput.placeholder = "ملاحظة (اختياري)";
+      noteInput.className = "text-input";
+      noteInput.value = row.note || "";
+      noteInput.addEventListener("input", () => {
+        currentRows[index].note = noteInput.value;
+        saveToStorage();
+      });
+      tdNote.appendChild(noteInput);
+
+      tr.appendChild(tdIndex);
+      tr.appendChild(tdCode);
+      tr.appendChild(tdName);
+      tr.appendChild(tdType);
+      tr.appendChild(tdAmount);
+      tr.appendChild(tdNote);
+
+      return tr;
+    }
+
+    // إعادة بناء الجدول من currentRows
+    function renderTable() {
+      tableBody.innerHTML = "";
+      currentRows.forEach((row, i) => {
+        const tr = createRowElement(row, i);
+        tableBody.appendChild(tr);
+      });
+      updateStats();
+    }
+
+    // قراءة ملف الموظفين (رقم + اسم فقط)
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFileName = file.name || "file";
+      fileInfo.textContent = "الملف المختار: " + currentFileName;
+      footerStatus.textContent = "جاري قراءة الملف...";
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = evt.target.result;
+          const workbook = XLSX.read(data, { type: "binary" });
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+
+          const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+          // json = مصفوفة صفوف [ [col1, col2, ...], [..], .. ]
+          if (!json || json.length === 0) {
+            footerStatus.textContent = "الملف لا يحتوي على بيانات.";
+            currentRows = [];
+            renderTable();
+            return;
+          }
+
+          // نتوقع أول صف = رؤوس، بقية الصفوف = بيانات
+          const rows = [];
+          for (let i = 1; i < json.length; i++) {
+            const row = json[i];
+            if (!row || row.length < 2) continue;
+            const code = row[0];
+            const name = row[1];
+
+            if ((code === null || code === undefined || code === "") &&
+                (name === null || name === undefined || name === "")) {
+              continue;
+            }
+
+            rows.push({
+              code: String(code).trim(),
+              name: String(name || "").trim(),
+              type: "",
+              amount: "",
+              note: ""
+            });
+          }
+
+          currentRows = rows;
+
+          // حاول استعادة بيانات محفوظة سابقاً لنفس الملف
+          const cached = loadFromStorage(currentFileName);
+          if (cached && Array.isArray(cached) && cached.length === currentRows.length) {
+            // نطابق حسب ترتيب الصفوف
+            for (let i = 0; i < currentRows.length; i++) {
+              currentRows[i].type   = cached[i].type   || "";
+              currentRows[i].amount = cached[i].amount || "";
+              currentRows[i].note   = cached[i].note   || "";
+            }
+            footerStatus.textContent = "تم تحميل الملف مع استعادة البيانات السابقة من هذا الجهاز.";
+          } else {
+            footerStatus.textContent = "تم تحميل الملف. يمكنك الآن تعبئة طلبات السلفة.";
+          }
+
+          renderTable();
+          saveToStorage();
+        } catch (err) {
+          console.error("Error reading Excel file:", err);
+          footerStatus.textContent = "حدث خطأ أثناء قراءة الملف. تأكد من أنه ملف Excel صحيح.";
+        }
+      };
+      reader.readAsBinaryString(file);
+    });
+
+    // تصدير ملف طلبات السلفة (XLSX)
+    btnExport.addEventListener("click", () => {
+      if (!currentRows.length) {
+        alert("لا يوجد بيانات موظفين لتصديرها. يرجى تحميل ملف الموظفين أولاً.");
+        return;
+      }
+
+      const exportData = currentRows.map(r => ({
+        "رقم الموظف": r.code || "",
+        "اسم الموظف": r.name || "",
+        "نوع الطلب": r.type || "",
+        "المبلغ المطلوب": r.amount || "",
+        "ملاحظة": r.note || ""
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(exportData, { skipHeader: false });
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "طلبات_السلفة");
+
+      const outName = "طلبات_السلفة_مراقب_الدوام.xlsx";
+      XLSX.writeFile(wb, outName);
+      footerStatus.textContent = "تم تنزيل ملف طلبات السلفة: " + outName;
+    });
+
+    // مسح الحفظ من هذا الجهاز
+    btnClearStorage.addEventListener("click", () => {
+      if (!currentFileName) {
+        if (!confirm("لم يتم اختيار ملف بعد، سيتم مسح جميع سجلات شاشة طلب السلفة لهذا المتصفح. هل أنت متأكد؟")) {
+          return;
+        }
+        // امسح كل المفاتيح المتعلقة بالشاشة
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("advance_requests_state_")) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+      } else {
+        const key = makeStorageKey(currentFileName);
+        if (!confirm("سيتم مسح البيانات المحفوظة لهذا الملف من هذا الجهاز فقط. هل أنت متأكد؟")) {
+          return;
+        }
+        localStorage.removeItem(key);
+      }
+
+      footerStatus.textContent = "تم مسح الحفظ من هذا الجهاز. يمكنك إعادة تحميل الملف والبدء من جديد.";
+    });
+  </script>
+</body>
+</html>
